@@ -52,6 +52,31 @@ Default credentials (change via `.env` before `db:init`):
 | `ADMIN_USERNAME` | Admin login username (used during `db:init`) |
 | `ADMIN_PASSWORD` | Admin login password (used during `db:init`) |
 | `SESSION_SECRET` | Secret for session cookies (32+ chars, required in production) |
+| `OIDC_ISSUER_URL` | OIDC provider issuer URL (enables SSO when set with `OIDC_CLIENT_ID`) |
+| `OIDC_CLIENT_ID` | Client ID registered with the OIDC provider |
+| `OIDC_CLIENT_SECRET` | Client secret (omit for public clients that use PKCE only) |
+| `OIDC_REDIRECT_URI` | Full callback URL, e.g. `https://plushdb.example.com/api/auth/oidc/callback` |
+| `OIDC_SCOPES` | Optional space-separated scopes (default `openid profile email`) |
+| `OIDC_PROVIDER_NAME` | Label on the SSO button (default `SSO`) |
+| `OIDC_ALLOWED_EMAILS` | Comma-separated email allowlist (recommended for a public deployment) |
+| `OIDC_ALLOW_INSECURE` | Set to `true` to allow non-HTTPS issuers in local development |
+
+### OIDC single sign-on
+
+PlushDB can authenticate users via any OpenID Connect 1.0 provider (Authentik,
+Keycloak, Google, Auth0, etc.) in addition to the built-in username/password
+account. To enable it:
+
+1. Register PlushDB as a new client at your identity provider. Use the
+   Authorization Code flow with PKCE and set the redirect URI to
+   `https://your-domain/api/auth/oidc/callback`.
+2. Set the `OIDC_*` variables above in your `.env` (or Coolify environment).
+3. Restart PlushDB. The login page will show a "Sign in with {provider}" button.
+
+**Access control:** anyone the IdP authenticates is granted full manage access.
+Set `OIDC_ALLOWED_EMAILS` to a comma-separated allowlist to lock this down.
+Users signing in via OIDC do not need a row in the local `users` table — their
+identity comes from the ID token.
 
 ## Scripts
 

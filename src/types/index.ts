@@ -38,9 +38,25 @@ export type PlushieInput = {
   remove_image?: boolean;
 };
 
+export type AuthMethod = "password" | "oidc";
+
 export type SessionData = {
   isLoggedIn: boolean;
   username?: string;
+  authMethod?: AuthMethod;
+  oidc?: {
+    sub: string;
+    email?: string;
+    name?: string;
+    idToken?: string;
+  };
+  // Transient state used during the OIDC authorization code flow.
+  oidcFlow?: {
+    state: string;
+    nonce: string;
+    codeVerifier: string;
+    redirectTo?: string;
+  };
 };
 
 export type Vendor = {

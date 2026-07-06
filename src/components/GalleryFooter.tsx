@@ -13,7 +13,15 @@ export function GalleryFooter() {
   const session = useAuthSession();
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    const res = await fetch("/api/auth/logout", { method: "POST" });
+    const data = (await res.json().catch(() => null)) as { endSessionUrl?: string } | null;
+
+    if (data?.endSessionUrl) {
+      // Follow the OIDC end-session redirect so the IdP also clears its cookie.
+      window.location.href = data.endSessionUrl;
+      return;
+    }
+
     router.push("/");
     router.refresh();
   }
