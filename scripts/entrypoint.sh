@@ -1,7 +1,10 @@
 #!/bin/sh
 set -e
 
-mkdir -p /app/data/uploads
+: "${DATA_DIR:=/app/data}"
+export DATA_DIR
+
+mkdir -p "${DATA_DIR}/uploads"
 
 node /app/scripts/init-db.mjs
 

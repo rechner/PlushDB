@@ -1,13 +1,13 @@
 import path from "path";
 import Database from "better-sqlite3";
-
-const DB_PATH = path.join(process.cwd(), "data", "plushdb.sqlite");
+import { getDataDir } from "./data-dir";
 
 let db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
   if (!db) {
-    db = new Database(DB_PATH);
+    const dbPath = path.join(getDataDir(), "plushdb.sqlite");
+    db = new Database(dbPath);
     db.pragma("journal_mode = WAL");
     db.pragma("foreign_keys = ON");
     initializeSchema(db);

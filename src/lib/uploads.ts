@@ -1,8 +1,11 @@
 import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { getDataDir } from "./data-dir";
 
-export const UPLOADS_DIR = path.join(process.cwd(), "data", "uploads");
+export function getUploadsDir(): string {
+  return path.join(getDataDir(), "uploads");
+}
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/jpeg": ".jpg",
@@ -14,8 +17,9 @@ const ALLOWED_TYPES: Record<string, string> = {
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export function ensureUploadsDir() {
-  if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  const uploadsDir = getUploadsDir();
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
   }
 }
 
@@ -32,7 +36,7 @@ export async function saveImage(file: File): Promise<string> {
 
   ensureUploadsDir();
   const filename = `${randomUUID()}${ALLOWED_TYPES[file.type]}`;
-  const filePath = path.join(UPLOADS_DIR, filename);
+  const filePath = path.join(getUploadsDir(), filename);
   const buffer = Buffer.from(await file.arrayBuffer());
   fs.writeFileSync(filePath, buffer);
   return filename;
@@ -42,7 +46,7 @@ export function deleteImage(filename: string | null | undefined) {
   if (!filename) return;
   if (!isSafeFilename(filename)) return;
 
-  const filePath = path.join(UPLOADS_DIR, filename);
+  const filePath = path.join(getUploadsDir(), filename);
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
   }

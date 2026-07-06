@@ -52,6 +52,7 @@ Default credentials (change via `.env` before `db:init`):
 | `ADMIN_USERNAME` | Admin login username (used during `db:init`) |
 | `ADMIN_PASSWORD` | Admin login password (used during `db:init`) |
 | `SESSION_SECRET` | Secret for session cookies (32+ chars, required in production) |
+| `DATA_DIR` | Directory for the SQLite DB and uploads (default `<cwd>/data`) |
 | `OIDC_ISSUER_URL` | OIDC provider issuer URL (enables SSO when set with `OIDC_CLIENT_ID`) |
 | `OIDC_CLIENT_ID` | Client ID registered with the OIDC provider |
 | `OIDC_CLIENT_SECRET` | Client secret (omit for public clients that use PKCE only) |

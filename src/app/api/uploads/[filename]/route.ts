@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
-import { getContentType, isSafeFilename, UPLOADS_DIR } from "@/lib/uploads";
+import { getContentType, getUploadsDir, isSafeFilename } from "@/lib/uploads";
 
 export async function GET(
   _request: NextRequest,
@@ -13,7 +13,7 @@ export async function GET(
     return new NextResponse("Not found", { status: 404 });
   }
 
-  const filePath = path.join(UPLOADS_DIR, filename);
+  const filePath = path.join(getUploadsDir(), filename);
   if (!fs.existsSync(filePath)) {
     return new NextResponse("Not found", { status: 404 });
   }
