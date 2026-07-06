@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as client from "openid-client";
 import { getSession } from "@/lib/auth";
-import { getOidcConfig, isEmailAllowed, readOidcEnv } from "@/lib/oidc";
+import { getOidcConfig, isEmailAllowed, readOidcEnv, resolveRedirectUri } from "@/lib/oidc";
 
 /**
  * Handles the OIDC redirect from the identity provider.
@@ -31,7 +31,11 @@ export async function GET(request: NextRequest) {
   try {
     const config = await getOidcConfig();
 
-    const tokens = await client.authorizationCodeGrant(config, new URL(request.url), {
+    const callbackUrl = new URL(resolveRedirectUri(request));
+    // Append the query params from the actual request (code, state, etc.)
+    new URL(request.url).searchParams.forEach((v, k) => callbackUrl.searchParams.set(k, v));
+
+    const tokens = await client.authorizationCodeGrant(config, callbackUrl, {
       pkceCodeVerifier: flow.codeVerifier,
       expectedState: flow.state,
       expectedNonce: flow.nonce,

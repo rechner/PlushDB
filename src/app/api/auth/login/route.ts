@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
 
     const session = await getSession();
     session.isLoggedIn = true;
+    session.authMethod = "password";
     session.username = user.username;
     await session.save();
 

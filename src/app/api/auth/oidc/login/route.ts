@@ -3,6 +3,10 @@ import * as client from "openid-client";
 import { getSession } from "@/lib/auth";
 import { getOidcConfig, readOidcEnv, resolveRedirectUri } from "@/lib/oidc";
 
+function isSafeRedirect(url: string): boolean {
+  return url.startsWith("/") && !url.startsWith("//");
+}
+
 /**
  * Initiates the OIDC Authorization Code flow with PKCE.
  *
@@ -25,7 +29,8 @@ export async function GET(request: NextRequest) {
     const nonce = client.randomNonce();
 
     const redirectUri = resolveRedirectUri(request);
-    const redirectTo = request.nextUrl.searchParams.get("redirect_to") || "/manage";
+    const rawRedirectTo = request.nextUrl.searchParams.get("redirect_to") || "/manage";
+    const redirectTo = isSafeRedirect(rawRedirectTo) ? rawRedirectTo : "/manage";
 
     const session = await getSession();
     session.oidcFlow = {
